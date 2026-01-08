@@ -1,0 +1,143 @@
+# output of memory_test.txt input file
+Memory Management Simulator
+Buddy system initialized with size 1024              //Memory Initialization
+Physical memory initialized: 1024
+Memory initialized with size 1024bytes
+Allocator set to First Fit
+First Fit allocated block id=1 size=100              //First Fit Allocation
+First Fit allocated block id=2 size=200
+First Fit allocated block id=3 size=50
+Block 2 freed
+
+Memory Dump:
+[   0 -   99] USED (id=1)
+[ 100 -  299] FREE
+[ 300 -  349] USED (id=3)
+[ 350 - 1023] FREE
+
+===== Memory Statistics =====
+Total Memory           : 1024
+Used Memory            : 150
+Memory Utilization     : 14.6484%
+Internal Fragmentation : 0 bytes
+External Fragmentation : 22.8833%
+Allocation Requests    : 3
+Allocation Success     : 3
+Allocation Failure     : 0
+Success Rate           : 100%
+Failure Rate           : 0%
+Memory initialized with size 1024bytes
+Allocator set to Best Fit
+Best Fit allocated block id=1 size=180                //Best Fit Allocation
+Best Fit allocated block id=2 size=70
+
+Memory Dump:
+[   0 -  179] USED (id=1)
+[ 180 -  249] USED (id=2)
+[ 250 - 1023] FREE
+
+===== Memory Statistics =====
+Total Memory           : 1024
+Used Memory            : 250
+Memory Utilization     : 24.4141%
+Internal Fragmentation : 0 bytes
+External Fragmentation : 0%
+Allocation Requests    : 2
+Allocation Success     : 2
+Allocation Failure     : 0
+Success Rate           : 100%
+Failure Rate           : 0%
+Memory initialized with size 1024bytes
+Allocator set to Worst Fit
+Worst Fit allocated block id=1 size=300               //Worst Fit Allocation
+Block 1 freed and merged
+
+Memory Dump:
+[   0 - 1023] FREE
+
+===== Memory Statistics =====
+Total Memory           : 1024
+Used Memory            : 0
+Memory Utilization     : 0%
+Internal Fragmentation : 0 bytes
+External Fragmentation : 0%
+Allocation Requests    : 1
+Allocation Success     : 1
+Allocation Failure     : 0
+Success Rate           : 100%
+Failure Rate           : 0%
+Allocator set to Buddy System
+Buddy allocated block 0 of size 128                      //Buddy system Allocation
+Buddy allocated block 1 of size 256
+Buddy freed block 1
+Block 0: allocatedSize = 128: requestedSize = 120
+Total Size: 1024
+Used: 128
+Free: 896
+Internal Fragmentation: 8
+Cache L1 initialized (size=64, line=16, assoc=1, policy=fifo)       //Cache Memory Simulation
+Cache L2 initialized (size=256, line=32, assoc=4, policy=fifo)     
+Virtual Memory initialized (pages=16, frames=4, pageSize=8)
+Page Replacement Policy set to fifo
+Virtual Address 0 ΓåÆ Page 0
+Page FAULT                                                         //Virtual Memory Management
+Physical Address 0
+Accessing cache with Physical Address 0
+L1 MISS
+L2 MISS Accessing Main Memory
+Virtual Address 0 ΓåÆ Page 0
+Page HIT
+Physical Address 0
+Accessing cache with Physical Address 0
+L1 HIT
+Virtual Address 0 ΓåÆ Page 0
+Page HIT
+Physical Address 0
+Accessing cache with Physical Address 0
+L1 HIT
+Virtual Memory Stats
+Accesses: 3
+Page Faults: 1
+Page Replacement Policy set to lru
+Virtual Address 0 ΓåÆ Page 0
+Page HIT
+Physical Address 0
+Accessing cache with Physical Address 0
+L1 HIT
+Virtual Address 0 ΓåÆ Page 0
+Page HIT
+Physical Address 0
+Accessing cache with Physical Address 0
+L1 HIT
+Virtual Memory Stats
+Accesses: 5
+Page Faults: 1
+Virtual Address 120 ΓåÆ Page 15
+Page FAULT
+Physical Address 8
+Accessing cache with Physical Address 8
+L1 HIT
+Virtual Address 256 ΓåÆ Page 32
+Page FAULT
+Physical Address 16
+Accessing cache with Physical Address 16
+L1 MISS
+L2 HIT
+Virtual Address 120 ΓåÆ Page 15
+Page HIT
+Physical Address 8
+Accessing cache with Physical Address 8
+L1 HIT
+Cache Stats [L1]
+Total Accesses: 8
+Hits: 6
+Misses: 2
+Hit Ratio: 75%
+Cache Stats [L2]
+Total Accesses: 2
+Hits: 1
+Misses: 1
+Hit Ratio: 50%
+Virtual Memory Stats
+Accesses: 8
+Page Faults: 3
