@@ -3,7 +3,11 @@
 #include <cstdlib>
 struct Block {
         int id;
-        size_t size;
+        int start;
+        int  size;
+        size_t requested;
+        bool free;
+        Block* next;
 };
 
 #endif

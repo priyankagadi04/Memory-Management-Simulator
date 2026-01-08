@@ -1,40 +1,50 @@
+#include "../../include/allocator/Allocator.h"
 #include "../../include/allocator/worstfit.h"
-#include <iostream>
 #include "../../include/allocator/block.h"
 
+#include <iostream>
 
-WorstFit::WorstFit(size_t size) : Allocator(size) {
-    counter = 0;
-}
+int WorstFit::malloc(int size) {
+    allocationRequests++;
+    Block* curr = head;
+    Block* worstBlock = nullptr;
+    int worstSize = -1;
 
-void WorstFit::allocate(size_t size) {
-    if (usedMemory + size > totalMemory) {
-        std::cout << "Allocation failed: insufficient memory\n";
-        return;
-    }
-
-    blocks.push_back({counter++, size});
-    usedMemory += size;
-
-    std::cout << "Worst Fit allocated block " << counter - 1
-              << " of size " << size << std::endl;
-}
-
-void WorstFit::deallocate(int id) {
-    for (auto it = blocks.begin(); it != blocks.end(); ++it) {
-        if (it->id == id) {
-            usedMemory -= it->size;
-            std::cout << "Freed block " << id << std::endl;
-            blocks.erase(it);
-            return;
+    // find worst (largest suitable) block
+    while (curr) {
+        if (curr->free && curr->size >= size && curr->size > worstSize) {
+            worstSize = curr->size;
+            worstBlock = curr;
         }
+        curr = curr->next;
     }
-    std::cout << "Invalid block id\n";
-}
 
-void WorstFit::dump() {
-    std::cout << "Memory Dump (Worst Fit):\n";
-    for (auto &b : blocks)
-        std::cout << "Block " << b.id << ": size = " << b.size << std::endl;
-}
+    if (!worstBlock) {
+        allocationFailure++;
+        std::cout << "Allocation failed (Worst Fit)\n";
+        return -1;
+    }
 
+    int oldSize = worstBlock->size;
+    if (worstBlock->size > size) {
+        Block* newBlock = new Block;
+        newBlock->start = worstBlock->start + size;
+        newBlock->size = worstBlock->size - size;
+        newBlock->free = true;
+        newBlock->id = -1;
+        newBlock->next = worstBlock->next;
+
+        worstBlock->next = newBlock;
+    }
+
+    worstBlock->size = size;
+    worstBlock->free = false;
+    worstBlock->id = blockCounter++;
+
+    allocationSuccess++;
+    totalAllocatedMemory += size;
+
+    std::cout << "Worst Fit allocated block id="
+              << worstBlock->id << " size=" << size << std::endl;
+    return worstBlock->id;
+}

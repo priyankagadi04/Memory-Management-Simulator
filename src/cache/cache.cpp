@@ -1,34 +1,116 @@
 #include "../../include/cache/cache.h"
 #include <iostream>
+#include <vector>
+#include <queue>
+#include <string>
 
 using namespace std;
 
-void Cache::init(string level, int size, int line, string policy) {
-    this->level = level;
-    this->size = size;
-    this->lineSize = line;
-    this->policy = policy;
-    hits = misses = 0;
+Cache::Cache()
+    : cacheSize(0),
+      lineSize(0),
+      associativity(1),
+      numSets(0),
+      hits(0),
+      misses(0),
+      accesses(0) {}
+
+void Cache::init(string lvl, int size, int line, int assoc,string pol) {
+    level = lvl;
+    cacheSize = size;
+    lineSize = line;
+    policy = pol;
+    associativity = assoc; 
+    numSets = cacheSize / (lineSize * associativity);
+
+    sets.clear();
+    sets.resize(numSets);
+
+    for (int i = 0; i < numSets; i++) {
+    sets[i].lines.resize(associativity);
+    for (int j = 0; j < associativity; j++) {
+        sets[i].lines[j].valid = false;
+    }
+    }
+
+    hits = misses = accesses = 0;
 
     cout << "Cache " << level << " initialized "
-         << "(size=" << size
-         << ", line=" << line
-         << ", policy=" << policy << ")\n";
+         << "(size=" << cacheSize
+         << ", line=" << lineSize
+         <<", assoc=" << associativity
+         << ", policy=" << policy << ")" << endl;
 }
 
-void Cache::access(string address) {
-    // Dummy simulation: alternate hit/miss
-    if ((hits + misses) % 2 == 0) {
-        hits++;
-        cout << "Cache HIT at " << address << "\n";
-    } else {
-        misses++;
-        cout << "Cache MISS at " << address << "\n";
+bool Cache::access(int address) {
+    accesses++;
+
+    int block = address / lineSize;
+    int setIndex = block % numSets;
+    int tag = block / numSets;
+
+    CacheSet &set = sets[setIndex];
+
+    // HIT check
+    for (auto &line : set.lines) {
+        if (line.valid && line.tag == tag) {
+            hits++;
+            return true;
+        }
     }
+
+    // MISS
+    misses++;
+
+    // FIFO replacement
+    for (int i = 0; i < associativity; i++) {
+        if (!set.lines[i].valid) {
+            set.lines[i] = {tag, true};
+            set.fifo.push(i);
+            return false;
+        }
+    }
+
+    int evictIndex = set.fifo.front();
+    set.fifo.pop();
+
+    set.lines[evictIndex] = {tag, true};
+    set.fifo.push(evictIndex);
+
+    return false;
 }
+
+void Cache::insert(int address) {
+    int block = address / lineSize;
+    int setIndex = block % numSets;
+    int tag = block / numSets;
+
+    CacheSet &set = sets[setIndex];
+
+    for (int i = 0; i < associativity; i++) {
+        if (!set.lines[i].valid) {
+            set.lines[i] = {tag, true};
+            set.fifo.push(i);
+            return;
+        }
+    }
+
+    int evictIndex = set.fifo.front();
+    set.fifo.pop();
+
+    set.lines[evictIndex] = {tag, true};
+    set.fifo.push(evictIndex);
+}
+
+
 
 void Cache::stats() {
-    cout << "Cache Stats [" << level << "]\n";
-    cout << "Hits: " << hits << "\n";
-    cout << "Misses: " << misses << "\n";
+    double hitRatio = (accesses == 0) ? 0 : (double)hits / accesses * 100;
+
+    cout << "Cache Stats [" << level << "]" << endl;
+    cout<<"Total Accesses: "<<accesses << endl;
+    cout << "Hits: " << hits << endl;
+    cout << "Misses: " << misses << endl;
+    cout << "Hit Ratio: " << hitRatio <<"%"<< endl;
 }
+

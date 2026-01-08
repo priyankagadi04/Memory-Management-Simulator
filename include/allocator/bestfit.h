@@ -5,14 +5,10 @@
 #include <vector>
 #include "block.h"
 
-class bestfit : public Allocator {
-    int counter;
-    std::vector<Block> blocks;
+class BestFit : public Allocator {
 public:
-    bestfit(size_t size);
-    void allocate(size_t size) override;
-    void deallocate(int id) override;
-    void dump() override;
+    int malloc(int size) override;
+    
     
 };
 

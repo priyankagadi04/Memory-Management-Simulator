@@ -1,40 +1,49 @@
+#include "../../include/allocator/Allocator.h"
 #include "../../include/allocator/firstfit.h"
-#include <iostream>
 #include "../../include/allocator/block.h"
 
+#include <iostream>
+#include <limits>
 
-firstfit::firstfit(size_t size) : Allocator(size) {
-    counter = 0;
-}
+int FirstFit::malloc(int size) {
+    allocationRequests++;
 
-void firstfit::allocate(size_t size) {
-    if (usedMemory + size > totalMemory) {
-        std::cout << "Allocation failed: insufficient memory\n";
-        return;
-    }
+    Block* curr = head;
 
-    blocks.push_back({counter++, size});
-    usedMemory += size;
+    while (curr) {
+        if (curr->free && curr->size >= size) {
 
-    std::cout << "Allocated block " << counter - 1
-              << " of size " << size << std::endl;
-}
+            int oldSize = curr->size;
 
-void firstfit::deallocate(int id) {
-    for (auto it = blocks.begin(); it != blocks.end(); ++it) {
-        if (it->id == id) {
-            usedMemory -= it->size;
-            std::cout << "Freed block " << id << std::endl;
-            blocks.erase(it);
-            return;
+            // split block if needed
+            if (curr->size > size) {
+                Block* newBlock = new Block;
+                newBlock->start = curr->start + size;
+                newBlock->size = curr->size - size;
+                newBlock->free = true;
+                newBlock->id = -1;
+                newBlock->next = curr->next;
+
+                curr->next = newBlock;
+            }
+
+            curr->size = size;
+            curr->free = false;
+            curr->id = blockCounter++;
+            allocationSuccess++;
+            totalAllocatedMemory += size;
+            
+
+            std::cout << "First Fit allocated block id="
+                      << curr->id << " size=" << size << std::endl;
+
+            return curr->id;
         }
+        curr = curr->next;
     }
-    std::cout << "Invalid block id\n";
-}
 
-void firstfit::dump() {
-    std::cout << "Memory Dump (First Fit):\n";
-    for (auto &b : blocks)
-        std::cout << "Block " << b.id << ": size = " << b.size << std::endl;
+    allocationFailure++;
+    std::cout << "Allocation failed: insufficient memory" << std::endl;
+    return -1;
 }
 

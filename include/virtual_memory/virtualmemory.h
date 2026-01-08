@@ -1,18 +1,36 @@
 #ifndef VIRTUAL_MEMORY_H
 #define VIRTUAL_MEMORY_H
 
+#include <vector>
 #include <string>
+#include <unordered_map>
+
+using namespace std;
 
 class VirtualMemory {
 private:
-    int pages, frames, pageSize;
-    int pageFaults, accesses;
-    std::string policy;
+    int numPages;
+    int numFrames;
+    int pageSize;
+
+    string policy;
+
+    vector<int> frames;
+    unordered_map<int, int> pageTable;
+
+    int accesses;
+    int pageFaults;
+
+
 public:
+    VirtualMemory();
+
     void init(int pages, int frames, int pageSize);
-    void setPolicy(std::string policy);
-    void access(std::string address);
+    void setPolicy(string pol);
+    void printPageTable();
+    int access(int address);
     void stats();
 };
 
 #endif
+

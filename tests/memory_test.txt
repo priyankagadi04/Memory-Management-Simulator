@@ -32,17 +32,14 @@ stats
 set allocator buddy
 malloc 120
 malloc 256
-free 3
+free 1
 dump memory
 stats
 
 # ---------- Cache Simulation ----------
-cache init L1 64 16 fifo
-cache init L2 256 32 fifo
-cache access 0x0004
-cache access 0x0040
-cache access 0x0004
-cache stats
+cache init L1 64 16 1 fifo
+cache init L2 256 32 4 fifo
+
 
 # ---------- Virtual Memory ----------
 vm init 16 4 8
@@ -58,8 +55,11 @@ vm access 0x0A
 vm stats
 
 # ---------- Integration Test ----------
-vm access 0x02
-vm access 0x06
+vm access 120
+vm access 256
+vm access 120
 cache stats
+vm stats
+
 
 # ---------- End ----------

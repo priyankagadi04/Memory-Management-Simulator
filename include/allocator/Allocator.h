@@ -1,26 +1,44 @@
 #ifndef ALLOCATOR_H
 #define ALLOCATOR_H
-
+#include "block.h"
 #include <iostream>
+using namespace std;
 
 class Allocator {
 protected:
-    size_t totalMemory;
-    size_t usedMemory;
+    Block* head;
+    int nextId;
+    int totalMemory;
+    int blockCounter;
+
+
+    // ---- Statistics ----
+    int allocationRequests;
+    int allocationSuccess;
+    int allocationFailure;
+
+    int totalAllocatedMemory;
+    int internalFragmentation;
 
 public:
-    Allocator(size_t size);
+    Allocator();
     virtual ~Allocator();
 
-    virtual void allocate(size_t size) = 0;
-    virtual void deallocate(int id) = 0;
-    virtual void dump() = 0;
+    void initMemory(int size);
 
-    virtual void stats() {
-        std::cout << "Total memory: " << totalMemory << std::endl;
-        std::cout << "Used memory: " << usedMemory << std::endl;
-        std::cout << "Free memory: " << (totalMemory - usedMemory) << std::endl;
-    }
+    // Allocation algorithms will use this
+    virtual int malloc(int size) = 0;
+
+    void freeBlock(int id);
+    void dumpMemory();
+    void printStats();
+
+    // Metric helpers
+    double calculateExternalFragmentation();
+    double calculateMemoryUtilization();
+    double getSuccessRate();
+    double getFailureRate();
 };
 
 #endif
+
