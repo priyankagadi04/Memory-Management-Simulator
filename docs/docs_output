@@ -1,6 +1,6 @@
 # output of memory_test.txt input file
 Memory Management Simulator
-Buddy system initialized with size 1024              //Memory Initialization
+Buddy system initialized with size 1024                //Memory Initialization
 Physical memory initialized: 1024
 Memory initialized with size 1024bytes
 Allocator set to First Fit
