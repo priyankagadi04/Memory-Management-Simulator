@@ -77,6 +77,8 @@ A C++ based memory management simulator that demonstrates:
       Total accesses
       Page faults
 
+# Video Demo
+https://1drv.ms/v/c/097d0c298a84ec05/IQBSQ0QtFbzsS7MBUoxNKEz-AfuGf-qLNoKpOQQZPu65lnE?e=qyCAHe
 
 ## How to Compile
 g++ -std=c++17 src/main.cpp src/allocator/*.cpp src/buddy/*.cpp src/cache/*.cpp src/virtual_memory/*.cpp -I include -o memsim
